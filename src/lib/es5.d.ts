@@ -146,14 +146,14 @@ interface ObjectConstructor {
       * Creates an object that has the specified prototype, and that optionally contains specified properties.
       * @param o Object to use as a prototype. May be null
       */
-    create<T>(o: T): T;
+    create<T extends object>(o: T): T;
 
     /**
       * Creates an object that has the specified prototype, and that optionally contains specified properties.
       * @param o Object to use as a prototype. May be null
       * @param properties JavaScript object that contains one or more property descriptors.
       */
-    create(o: any, properties: PropertyDescriptorMap): any;
+    create(o: object | null, properties: PropertyDescriptorMap): any;
 
     /**
       * Adds a property to an object, or modifies attributes of an existing property.
@@ -175,6 +175,18 @@ interface ObjectConstructor {
       * @param o Object on which to lock the attributes.
       */
     seal<T>(o: T): T;
+
+    /**
+      * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
+      * @param o Object on which to lock the attributes.
+      */
+    freeze<T>(a: T[]): ReadonlyArray<T>;
+
+    /**
+      * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
+      * @param o Object on which to lock the attributes.
+      */
+    freeze<T extends Function>(f: T): T;
 
     /**
       * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
@@ -1159,8 +1171,9 @@ interface Array<T> {
     /**
       * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
       * @param start The zero-based location in the array from which to start removing elements.
+      * @param deleteCount The number of elements to remove.
       */
-    splice(start: number): T[];
+    splice(start: number, deleteCount?: number): T[];
     /**
       * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
       * @param start The zero-based location in the array from which to start removing elements.
@@ -1367,7 +1380,7 @@ type Pick<T, K extends keyof T> = {
 /**
  * Construct a type with a set of properties K of type T
  */
-type Record<K extends string | number, T> = {
+type Record<K extends string, T> = {
     [P in K]: T;
 }
 
